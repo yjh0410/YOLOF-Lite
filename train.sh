@@ -1,0 +1,15 @@
+python train.py \
+        --cuda \
+        -d voc \
+        --root /mnt/share/ssd2/dataset/ \
+        -v yolof50 \
+        --batch_size 16 \
+        --img_size 800 \
+        --lr 0.03 \
+        --lr_backbone 0.01 \
+        --optimizer sgd \
+        --wp_iter 1500 \
+        --grad_clip_norm 4.0 \
+        --num_workers 8 \
+        --max_epoch 13 \
+        --lr_epoch 8 11
