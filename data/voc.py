@@ -133,13 +133,8 @@ class VOCDetection(data.Dataset):
         if self.target_transform is not None:
             anno = self.target_transform(anno)
 
-        # check the annotation
-        if len(anno) == 0:
-            anno = np.zeros([1, 5])
-        else:
-            anno = np.array(anno)
-        
-        # target
+        # guard against no boxes via resizing
+        anno = np.array(anno).reshape(-1, 5)
         target = {
             "boxes": anno[:, :4],
             "labels": anno[:, 4],
@@ -179,16 +174,13 @@ class VOCDetection(data.Dataset):
             h0, w0, _ = img_i.shape
 
             # resize
-            scale_range = np.arange(50, 210, 10)
-            s = np.random.choice(scale_range) / 100.
-
             if np.random.randint(2):
                 # keep aspect ratio
                 r = self.img_size / max(h0, w0)
                 if r != 1: 
-                    img_i = cv2.resize(img_i, (int(w0 * r * s), int(h0 * r * s)))
+                    img_i = cv2.resize(img_i, (int(w0 * r), int(h0 * r)))
             else:
-                img_i = cv2.resize(img_i, (int(self.img_size * s), int(self.img_size * s)))
+                img_i = cv2.resize(img_i, (int(self.img_size), int(self.img_size)))
             h, w, _ = img_i.shape
 
             # place img in img4
@@ -222,19 +214,16 @@ class VOCDetection(data.Dataset):
                 mosaic_labels.append(labels_i)
 
 
+        valid_bboxes = []
+        valid_labels = []
         # check target
-        if len(mosaic_bboxes) == 0:
-            mosaic_bboxes = np.zeros([1, 4])
-            mosaic_labels = np.zeros([1,])
-        else:
+        if len(mosaic_bboxes) > 0:
             mosaic_bboxes = np.concatenate(mosaic_bboxes)
             mosaic_labels = np.concatenate(mosaic_labels)
             # Cutout/Clip targets
             np.clip(mosaic_bboxes, 0, 2 * self.img_size, out=mosaic_bboxes)
 
             # check boxes
-            valid_bboxes = []
-            valid_labels = []
             for box, label in zip(mosaic_bboxes, mosaic_labels):
                 x1, y1, x2, y2 = box
                 bw, bh = x2 - x1, y2 - y1
@@ -245,9 +234,11 @@ class VOCDetection(data.Dataset):
                     valid_bboxes.append([0., 0., 0., 0.])
                     valid_labels.append(0.)
 
-            mosaic_bboxes = np.array(valid_bboxes)
-            mosaic_labels = np.array(valid_labels)
-
+        # guard against no boxes via resizing
+        valid_bboxes = np.array(valid_bboxes).reshape(-1, 4)
+        valid_labels = np.array(valid_labels).reshape(-1)
+        mosaic_bboxes = np.array(valid_bboxes)
+        mosaic_labels = np.array(valid_labels)
 
         # target
         mosaic_target = {
@@ -344,21 +335,22 @@ if __name__ == "__main__":
         boxes = target["boxes"]
         labels = target["labels"]
 
-        for box, label in zip(boxes, labels):
-            x1, y1, x2, y2 = box
-            # rescale
-            x1 = int(x1 * img_w)
-            y1 = int(y1 * img_h)
-            x2 = int(x2 * img_w)
-            y2 = int(y2 * img_h)
-            
-            cls_id = int(label)
-            color = class_colors[cls_id]
-            # class name
-            label = VOC_CLASSES[cls_id]
-            image = cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0,0,255), 2)
-            # put the test on the bbox
-            cv2.putText(image, label, (int(x1), int(y1 - 5)), 0, 0.5, color, 1, lineType=cv2.LINE_AA)
+        if len(boxes) > 0:
+            for box, label in zip(boxes, labels):
+                x1, y1, x2, y2 = box
+                # rescale
+                x1 = int(x1 * img_w)
+                y1 = int(y1 * img_h)
+                x2 = int(x2 * img_w)
+                y2 = int(y2 * img_h)
+                
+                cls_id = int(label)
+                color = class_colors[cls_id]
+                # class name
+                label = VOC_CLASSES[cls_id]
+                image = cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0,0,255), 2)
+                # put the test on the bbox
+                cv2.putText(image, label, (int(x1), int(y1 - 5)), 0, 0.5, color, 1, lineType=cv2.LINE_AA)
         cv2.imshow('gt', image)
         # cv2.imwrite(str(i)+'.jpg', img)
         cv2.waitKey(0)
