@@ -37,8 +37,6 @@ def parse_args():
                         help='use cuda.')
     parser.add_argument('--batch_size', default=16, type=int, 
                         help='Batch size for training')
-    parser.add_argument('--lr', type=float, default=0.01,
-                        help='Learning rate')
     parser.add_argument('--start_epoch', type=int, default=0,
                         help='start epoch to train')
     parser.add_argument('--max_epoch', type=int, default=12,
