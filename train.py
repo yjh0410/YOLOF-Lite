@@ -149,10 +149,10 @@ def train():
     # multi scale trick
     train_size = args.img_size
     val_size = args.img_size
-    scale_jitter = None
+    multi_scale = None
     if args.multi_scale:
         print('Multi scale training ...')
-        scale_jitter = cfg['scale_jitter']
+        multi_scale = cfg['multi_scale']
 
     # dataset and evaluator
     dataset, evaluator, num_classes = build_dataset(cfg, args, device)
@@ -237,7 +237,7 @@ def train():
             # multi-scale trick
             if iter_i % 10 == 0 and iter_i > 0 and args.multi_scale:
                 # randomly choose a new size
-                train_size = int(random.choice(scale_jitter) * args.img_size)
+                train_size = random.choice(multi_scale)
                 model_without_ddp.reset_anchors(train_size)
             if args.multi_scale:
                 # interpolate

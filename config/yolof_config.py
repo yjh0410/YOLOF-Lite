@@ -4,6 +4,7 @@
 yolof_config = {
     'yolof18': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'RGB',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [0.229, 0.224, 0.225],
@@ -41,6 +42,7 @@ yolof_config = {
 
     'yolof50': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'RGB',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [0.229, 0.224, 0.225],
@@ -81,6 +83,7 @@ yolof_config = {
 
     'yolof50-DC5': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'RGB',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [0.229, 0.224, 0.225],
@@ -118,6 +121,7 @@ yolof_config = {
 
     'yolof101': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'RGB',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [0.229, 0.224, 0.225],
@@ -155,6 +159,7 @@ yolof_config = {
 
     'yolof101-DC5': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'RGB',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [0.229, 0.224, 0.225],
@@ -192,6 +197,7 @@ yolof_config = {
 
     'yolof53': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'BGR',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [1.0, 1.0, 1.0],
@@ -229,6 +235,7 @@ yolof_config = {
 
     'yolof53-DC5': {
         # input
+        'multi_scale': [480, 544, 608, 672, 736, 800],
         'format': 'BGR',
         'pixel_mean': [0.485, 0.456, 0.406],
         'pixel_std': [1.0, 1.0, 1.0],
