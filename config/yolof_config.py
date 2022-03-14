@@ -69,10 +69,13 @@ yolof_config = {
         'igt': 0.7,
         'ctr_clamp': 32,
         # optimizer
+        'base_lr': 0.03,
+        'lr_backbone': 0.01,
+        'optimizer': 'sgd',
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
+        'wp_iter': 1500,
         'warmup_factor': 0.00066667
     },
 

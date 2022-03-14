@@ -51,6 +51,8 @@ def parse_args():
                         help='Number of GPUs to train')
     parser.add_argument('--eval_epoch', type=int,
                             default=2, help='interval between evaluations')
+    parser.add_argument('--grad_clip_norm', type=float, default=-1.,
+                        help='grad clip.')
     parser.add_argument('--tfboard', action='store_true', default=False,
                         help='use tensorboard')
     parser.add_argument('--save_folder', default='weights/', type=str, 
@@ -60,11 +62,6 @@ def parse_args():
     parser.add_argument('--img_size', type=int, default=640,
                         help='The size of input image')
 
-    # optimizer
-    parser.add_argument('-opt', '--optimizer', default='sgd', type=str, 
-                        help='optimizer: sgd, adamw')
-    parser.add_argument('--grad_clip_norm', type=float, default=-1.,
-                        help='grad clip.')
 
     # visualize
     parser.add_argument('--vis_data', action='store_true', default=False,
@@ -111,8 +108,6 @@ def parse_args():
                         help='Mosaic augmentation')
     parser.add_argument('--no_warmup', action='store_true', default=False,
                         help='do not use warmup')
-    parser.add_argument('--wp_iter', type=int, default=500,
-                        help='The upper bound of warm-up')
 
     # DDP train
     parser.add_argument('-dist', '--distributed', action='store_true', default=False,
@@ -200,8 +195,9 @@ def train():
 
     # optimizer
     optimizer = build_optimizer(model=model_without_ddp,
-                                base_lr=args.lr,
-                                name=args.optimizer,
+                                base_lr=cfg['base_lr'],
+                                lr_backbone=cfg['lr_backbone'],
+                                name=cfg['optimizer'],
                                 momentum=cfg['momentum'],
                                 weight_decay=cfg['weight_decay'])
     
@@ -210,8 +206,8 @@ def train():
 
     # warmup scheduler
     warmup_scheduler = build_warmup(name=cfg['warmup'],
-                                    base_lr=args.lr,
-                                    wp_iter=args.wp_iter,
+                                    base_lr=cfg['base_lr'],
+                                    wp_iter=cfg['wp_iter'],
                                     warmup_factor=cfg['warmup_factor'])
 
     # training configuration
@@ -231,14 +227,14 @@ def train():
         for iter_i, (images, targets) in enumerate(dataloader):
             ni = iter_i + epoch * epoch_size
             # warmup
-            if ni < args.wp_iter and warmup:
+            if ni < cfg['wp_iter'] and warmup:
                 warmup_scheduler.warmup(ni, optimizer)
 
-            elif ni == args.wp_iter and warmup:
+            elif ni == cfg['wp_iter'] and warmup:
                 # warmup is over
                 print('Warmup is over')
                 warmup = False
-                warmup_scheduler.set_lr(optimizer, args.lr, args.lr)
+                warmup_scheduler.set_lr(optimizer, cfg['base_lr'], cfg['base_lr'])
 
             # multi-scale trick
             if iter_i % 10 == 0 and iter_i > 0 and args.multi_scale:
@@ -299,12 +295,14 @@ def train():
             if distributed_utils.is_main_process() and iter_i % 10 == 0:
                 t1 = time.time()
                 cur_lr = [param_group['lr']  for param_group in optimizer.param_groups]
-                print('[Epoch %d/%d][Iter %d/%d][lr: %.6f][Loss: cls %.2f || reg %.2f || gnorm: %.2f || size %d || time: %.2f]'
+                cur_lr_dict = {'lr': cur_lr[0], 'lr_bk': cur_lr[1]}
+                print('[Epoch %d/%d][Iter %d/%d][lr: %.6f][lr_bk: %.6f][Loss: cls %.2f || reg %.2f || gnorm: %.2f || size %d || time: %.2f]'
                         % (epoch+1, 
                            max_epoch, 
                            iter_i, 
                            epoch_size, 
-                           cur_lr[0],
+                           cur_lr_dict['lr'],
+                           cur_lr_dict['lr_bk'],
                            loss_dict_reduced['cls_loss'].item(), 
                            loss_dict_reduced['reg_loss'].item(), 
                            total_norm,
