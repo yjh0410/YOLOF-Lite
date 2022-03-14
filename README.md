@@ -1,13 +1,16 @@
-# YOLOQ: Single level Object Detector with Dynamic Attention
+# YOLOF: You Only Look At One-level Feature
+
+This is a lite version of YOLOF, which is built by PyTorch.
+
 # Requirements
 - We recommend you to use Anaconda to create a conda environment:
 ```Shell
-conda create -n yoloq python=3.6
+conda create -n yolof python=3.6
 ```
 
 - Then, activate the environment:
 ```Shell
-conda activate yoloq
+conda activate yolof
 ```
 
 - Requirements:

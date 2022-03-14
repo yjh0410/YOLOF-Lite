@@ -1,11 +1,11 @@
 python train.py \
         --cuda \
-        -d voc \
+        -d coco \
         --root /mnt/share/ssd2/dataset/ \
         -v yolof50 \
         --batch_size 16 \
         --img_size 800 \
         --grad_clip_norm 4.0 \
         --num_workers 8 \
-        --max_epoch 13 \
+        --max_epoch 12 \
         --lr_epoch 8 11

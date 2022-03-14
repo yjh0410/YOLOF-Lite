@@ -11,7 +11,6 @@ class UniformMatcher(nn.Module):
 
     Args:
         match_times(int): Number of positive anchors for each gt box.
-        选择topk个与gt的l1_distance最小的预测框, 再选择topk个与gt的l1_distance最小的anchor, 将其作为正例框
     """
 
     def __init__(self, match_times: int = 4):
@@ -50,7 +49,7 @@ class UniformMatcher(nn.Module):
                                         box_xyxy_to_cxcywh(tgt_bbox), 
                                         p=1)
 
-        # Final cost matrix
+        # Final cost matrix: [B, M, N], M=num_queries, N=num_tgt
         C = cost_bbox
         C = C.view(bs, num_queries, -1).cpu()
         C1 = cost_bbox_anchors
@@ -59,6 +58,8 @@ class UniformMatcher(nn.Module):
         sizes = [len(v['boxes']) for v in targets]  # the number of object instances in each image
         all_indices_list = [[] for _ in range(bs)]
         # positive indices when matching predict boxes and gt boxes
+        # len(indices) = batch size
+        # len(tupe) = topk
         indices = [
             tuple(
                 torch.topk(
@@ -80,20 +81,21 @@ class UniformMatcher(nn.Module):
             for i, c in enumerate(C1.split(sizes, -1))]
 
         # concat the indices according to image ids
-        for img_id, (idx, idx1) in enumerate(zip(indices, indices1)):  # indices:每张图片中每个目标对应的top_k个预测框的序号 indices1:每张图片中每个目标对应的top_k个anchor的序号（b, top_k, 目标数）
+        # img_id = batch_id
+        for img_id, (idx, idx1) in enumerate(zip(indices, indices1)):
             img_idx_i = [
                 np.array(idx_ + idx1_)
                 for (idx_, idx1_) in zip(idx, idx1)
-            ]  # 合并，前面是预测框序号，后面是anchor序号，[top_k, 2*目标数]
+            ] # 'i' is the index of queris
             img_idx_j = [
                 np.array(list(range(len(idx_))) + list(range(len(idx1_))))
                 for (idx_, idx1_) in zip(idx, idx1)
-            ]  # 目标在图片中的编号[0,1,2,3,...,0,1,2,3,...]
+            ] # 'j' is the index of tgt
             all_indices_list[img_id] = [*zip(img_idx_i, img_idx_j)]
 
         # re-organize the positive indices
         all_indices = []
-        for img_id in range(bs):  # 变换存储结构
+        for img_id in range(bs):
             all_idx_i = []
             all_idx_j = []
             for idx_list in all_indices_list[img_id]:

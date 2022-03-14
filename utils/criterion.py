@@ -127,26 +127,22 @@ class Criterion(nn.Module):
             ious.append(max_iou)
             pos_ious.append(pos_iou)
 
-        ious = torch.cat(ious)  # 每个预测框和gt最大的iou
+        ious = torch.cat(ious)
         ignore_idx = ious > self.cfg['igt']
         pos_ious = torch.cat(pos_ious)
         pos_ignore_idx = pos_ious < self.cfg['iou_t']
 
         src_idx = torch.cat(
             [src + idx * anchor_boxes[0].shape[0] for idx, (src, _) in
-             enumerate(indices)])  # anchor序号 + anchor数 * 图序号 --> anchor序号变成绝对位置
+             enumerate(indices)])
         gt_cls = torch.full(pred_cls.shape[:1],
                                 self.num_classes,
                                 dtype=torch.int64,
                                 device=pred_cls.device)
         gt_cls[ignore_idx] = -1
-
-        # t['labels']:图片中每个gt对应的类别序号 J：每个选出anchor对应的gt在图片中的序号 --> 每个选出anchor对应的gt在图片中的类别序号
         tgt_cls_o = torch.cat([t['labels'][J] for t, (_, J) in zip(targets, indices)])
-
         tgt_cls_o[pos_ignore_idx] = -1
 
-        # 正例锚框填上真实类别值，负例锚框为80，剔除锚框为-1
         gt_cls[src_idx] = tgt_cls_o.to(pred_cls.device)
 
         valid_idxs = gt_cls >= 0
@@ -154,7 +150,7 @@ class Criterion(nn.Module):
         num_foreground = foreground_idxs.sum()
 
         gt_cls_target = torch.zeros_like(pred_cls)
-        gt_cls_target[foreground_idxs, gt_cls[foreground_idxs]] = 1  # 前景生成onehot编码
+        gt_cls_target[foreground_idxs, gt_cls[foreground_idxs]] = 1
 
         if is_dist_avail_and_initialized():
             torch.distributed.all_reduce(num_foreground)
