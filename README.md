@@ -9,6 +9,8 @@ the aspect ratio is not kept in my YOLOF-Lite. In official YOLOF, the aspect rat
 I think it might be easy to deploy the resize method used in YOLOF in my YOLOF-Lite. If you
 want to try, just try.
 
+For other details, I try to align my configuration with official YOLOF.
+
 # Requirements
 - We recommend you to use Anaconda to create a conda environment:
 ```Shell

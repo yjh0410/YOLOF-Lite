@@ -303,8 +303,17 @@ class VOCDetection(data.Dataset):
 if __name__ == "__main__":
     from transforms import TrainTransforms, ValTransforms, BaseTransforms
 
+    trans_config = [
+            {'name': 'RandomHorizontalFlip'},
+            {'name': 'RandomShift',
+             'max_shift': 32},
+            {'name': 'Resize'},
+            {'name': 'ToTensor'},
+            {'name': 'Normalize'},
+            {'name': 'PadImage'}
+        ]
     img_size = 640
-    transform = TrainTransforms(img_size=img_size)
+    transform = TrainTransforms(img_size=img_size, trans_config=trans_config)
     color_augment = BaseTransforms(img_size=img_size)
     pixel_mean = np.array(transform.pixel_mean, dtype=np.float32)
     pixel_std = np.array(transform.pixel_std, dtype=np.float32)

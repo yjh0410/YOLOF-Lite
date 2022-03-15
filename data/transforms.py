@@ -348,23 +348,42 @@ class BaseTransforms(object):
 # TrainTransform
 class TrainTransforms(object):
     def __init__(self, 
-                 img_size=800, 
+                 img_size=800,
+                 trans_config=None,
                  pixel_mean=(0.485, 0.456, 0.406), 
                  pixel_std=(0.229, 0.224, 0.225), 
                  format='RGB'):
         self.img_size = img_size
+        self.trans_config = trans_config
         self.pixel_mean = pixel_mean
         self.pixel_std = pixel_std
-        self.transforms = Compose([
-            # DistortTransform(),
-            RandomHorizontalFlip(),
-            RandomShift(max_shift=32),
-            # RandomSizeCrop(),
-            Resize(img_size=img_size),
-            ToTensor(format=format),
-            Normalize(pixel_mean, pixel_std),
-            PadImage(img_size=img_size)
-        ])
+        self.format = format
+        self.transforms = Compose(self.build_transforms(trans_config))
+
+
+    def build_transforms(self, trans_config):
+        transform = []
+        for t in trans_config:
+            if t['name'] == 'DistortTransform':
+                transform.append(DistortTransform())
+            elif t['name'] == 'RandomHorizontalFlip':
+                transform.append(RandomHorizontalFlip())
+            elif t['name'] == 'RandomShift':
+                transform.append(RandomShift(max_shift=t['max_shift']))
+            elif t['name'] == 'RandomSizeCrop':
+                transform.append(RandomSizeCrop())
+            elif t['name'] == 'Resize':
+                transform.append(Resize(img_size=self.img_size))
+            elif t['name'] == 'ToTensor':
+                transform.append(ToTensor(format=self.format))
+            elif t['name'] == 'Normalize':
+                transform.append(Normalize(pixel_mean=self.pixel_mean,
+                                           pixel_std=self.pixel_std))
+            elif t['name'] == 'PadImage':
+                transform.append(PadImage(img_size=self.img_size))
+        
+        return transform
+
 
     def __call__(self, image, target):
         return self.transforms(image, target)

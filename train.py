@@ -37,16 +37,12 @@ def parse_args():
                         help='use cuda.')
     parser.add_argument('--batch_size', default=16, type=int, 
                         help='Batch size for training')
-    parser.add_argument('--start_epoch', type=int, default=0,
-                        help='start epoch to train')
-    parser.add_argument('--max_epoch', type=int, default=12,
-                        help='max epoch to train')
+    parser.add_argument('--schedule', type=str, default='1x', choices=['1x', '2x', '3x', '9x'],
+                        help='training schedule. Attention, 9x is designed for YOLOF53-DC5.')
     parser.add_argument('-lr', '--base_lr', type=float, default=0.12,
                         help='base learning rate')
     parser.add_argument('-lr_bk', '--backbone_lr', type=float, default=0.04,
                         help='backbone learning rate')
-    parser.add_argument('--lr_epoch', nargs='+', default=[8, 10], type=int,
-                        help='lr epoch to decay')
     parser.add_argument('--num_workers', default=4, type=int, 
                         help='Number of workers used in dataloading')
     parser.add_argument('--num_gpu', default=1, type=int, 
@@ -73,7 +69,7 @@ def parse_args():
 
     # model
     parser.add_argument('-v', '--version', default='yolof50', choices=['yolof18', 'yolof50', 'yolof50-DC5', \
-                                                                       'yolof101', 'yolof101-DC5', 'yolof53', 'yolof53-DC5', \
+                                                                       'yolof101', 'yolof101-DC5', 'yolof53-DC5', \
                                                                        'yoloft-DC5', 'yolofs-DC5', 'yolofb-DC5', 'yolofl-DC5', 'yolofx-DC5'],
                         help='build yolof')
     parser.add_argument('--conf_thresh', default=0.05, type=float,
@@ -104,8 +100,6 @@ def parse_args():
     # train trick
     parser.add_argument('--ema', action='store_true', default=False,
                         help='EMA')
-    parser.add_argument('-ms', '--multi_scale', action='store_true', default=False,
-                        help='Multi scale augmentation')
     parser.add_argument('--mosaic', action='store_true', default=False,
                         help='Mosaic augmentation')
     parser.add_argument('--no_warmup', action='store_true', default=False,
@@ -148,15 +142,16 @@ def train():
 
     # YOLOF Config
     cfg = yolof_config[args.version]
+    print('==============================')
     print('Model Configuration: \n', cfg)
 
     # multi scale trick
     train_size = args.img_size
     val_size = args.img_size
     multi_scale = None
-    if args.multi_scale:
-        print('Multi scale training ...')
-        multi_scale = cfg['multi_scale']
+    if cfg['epoch'][args.schedule]['multi_scale'] is not None:
+        multi_scale = cfg['epoch'][args.schedule]['multi_scale']
+        print('Multi scale training: {}'. format(multi_scale))
 
     # dataset and evaluator
     dataset, evaluator, num_classes = build_dataset(cfg, args, device)
@@ -207,7 +202,8 @@ def train():
                                 weight_decay=cfg['weight_decay'])
     
     # lr scheduler
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=args.lr_epoch)
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer=optimizer, 
+                                                        milestones=cfg['epoch'][args.schedule]['lr_epoch'])
 
     # warmup scheduler
     warmup_scheduler = build_warmup(name=cfg['warmup'],
@@ -216,15 +212,14 @@ def train():
                                     warmup_factor=cfg['warmup_factor'])
 
     # training configuration
-    max_epoch = args.max_epoch
-    batch_size = args.batch_size
-    epoch_size = len(dataset) // (batch_size * args.num_gpu)
+    max_epoch = cfg['epoch'][args.schedule]['max_epoch']
+    epoch_size = len(dataset) // (args.batch_size * args.num_gpu)
     best_map = -1.
     warmup = not args.no_warmup
 
     t0 = time.time()
     # start training loop
-    for epoch in range(args.start_epoch, max_epoch):
+    for epoch in range(max_epoch):
         if args.distributed:
             dataloader.sampler.set_epoch(epoch)            
 
@@ -242,11 +237,11 @@ def train():
                 warmup_scheduler.set_lr(optimizer, args.base_lr, args.base_lr)
 
             # multi-scale trick
-            if iter_i % 10 == 0 and iter_i > 0 and args.multi_scale:
-                # randomly choose a new size
-                train_size = random.choice(multi_scale)
-                model_without_ddp.reset_anchors(train_size)
-            if args.multi_scale:
+            if multi_scale is not None:
+                if iter_i % 1 == 0 and iter_i > 0:
+                    # randomly choose a new size
+                    train_size = random.choice(multi_scale)
+                    model_without_ddp.reset_anchors(train_size)
                 # interpolate
                 images = F.interpolate(input=images, 
                                        size=train_size, 
@@ -286,7 +281,7 @@ def train():
 
             # Backward and Optimize
             total_loss.backward()
-            if args.grad_clip_norm > 0. and epoch < args.lr_epoch[0]:
+            if args.grad_clip_norm > 0.:
                 total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip_norm)
             else:
                 total_norm = get_total_grad_norm(model.parameters())
@@ -297,7 +292,7 @@ def train():
                 ema.update(model_without_ddp)
 
             # display
-            if distributed_utils.is_main_process() and iter_i % 10 == 0:
+            if distributed_utils.is_main_process() and iter_i % 1 == 0:
                 t1 = time.time()
                 cur_lr = [param_group['lr']  for param_group in optimizer.param_groups]
                 cur_lr_dict = {'lr': cur_lr[0], 'lr_bk': cur_lr[1]}
@@ -366,7 +361,11 @@ def train():
 
 def build_dataset(cfg, args, device):
     # transform
+    trans_config = cfg['transforms'][args.schedule]
+    print('==============================')
+    print('TrainTransforms: {}'.format(trans_config))
     train_transform = TrainTransforms(img_size=args.img_size, 
+                                      trans_config=trans_config,
                                       pixel_mean=cfg['pixel_mean'],
                                       pixel_std=cfg['pixel_std'],
                                       format=cfg['format'])
@@ -378,7 +377,7 @@ def build_dataset(cfg, args, device):
                                    pixel_mean=cfg['pixel_mean'],
                                    pixel_std=cfg['pixel_std'],
                                    format=cfg['format'])
-    
+    # dataset
     if args.dataset == 'voc':
         data_dir = os.path.join(args.root, 'VOCdevkit')
         num_classes = 20
@@ -412,7 +411,6 @@ def build_dataset(cfg, args, device):
         print('unknow dataset !! Only support voc and coco !!')
         exit(0)
 
-    # dataset
     print('==============================')
     print('Training model on:', args.dataset)
     print('The dataset size:', len(dataset))
