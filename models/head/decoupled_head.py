@@ -49,76 +49,6 @@ class NaiveHead(nn.Module):
         return cls_feats, reg_feats
 
 
-class CrossHead(nn.Module):
-    def __init__(self, 
-                 head_dim=256,
-                 kernel_size=3,
-                 padding=1):
-        super().__init__()
-        self.head_dim = head_dim
-
-        # first stem
-        self.cls_feat_0 = Conv(head_dim, head_dim, k=1)
-        self.reg_feat_0 = Conv(head_dim, head_dim, k=1)
-
-        # second stem
-        self.cls_feat_1 = Conv(head_dim, head_dim, k=kernel_size, p=padding)
-        self.reg_feat_1 = Conv(head_dim, head_dim, k=kernel_size, p=padding)
-
-        # second stem
-        self.cls_feat_2 = Conv(head_dim, head_dim, k=kernel_size, p=padding)
-        self.reg_feat_2 = Conv(head_dim, head_dim, k=kernel_size, p=padding)
-
-        # final stem
-        self.cls_feat_3 = Conv(head_dim, head_dim, k=kernel_size, p=padding)
-        self.reg_feat_3 = Conv(head_dim, head_dim, k=kernel_size, p=padding)
-
-        self._init_weight()
-
-        
-    def _init_weight(self):
-        # init weight of detection head
-        for m in [self.cls_feat_0, self.cls_feat_1, self.cls_feat_2, self.cls_feat_3]:
-            if isinstance(m, nn.Conv2d):
-                nn.init.normal_(m.weight, mean=0, std=0.01)
-                if hasattr(m, 'bias') and m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
-
-            if isinstance(m, (nn.GroupNorm, nn.BatchNorm2d, nn.SyncBatchNorm)):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
-
-        for m in [self.reg_feat_0, self.reg_feat_1, self.reg_feat_2, self.reg_feat_3]:
-            if isinstance(m, nn.Conv2d):
-                nn.init.normal_(m.weight, mean=0, std=0.01)
-                if hasattr(m, 'bias') and m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
-
-            if isinstance(m, (nn.GroupNorm, nn.BatchNorm2d, nn.SyncBatchNorm)):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
-
-
-    def forward(self, x):
-        """
-            in_feats: (List of Tensor) [C3, C4, C5]
-        """
-        cls_feat_0 = self.cls_feat_0(x)
-        reg_feat_0 = self.reg_feat_0(x)
-
-        # cross
-        cls_feat_1 = self.cls_feat_1(cls_feat_0 + reg_feat_0)
-        reg_feat_1 = self.reg_feat_1(cls_feat_0 + reg_feat_0)
-
-        cls_feat_2 = self.cls_feat_2(cls_feat_1 + reg_feat_1)
-        reg_feat_2 = self.reg_feat_2(cls_feat_1 + reg_feat_1)
-
-        cls_feat_3 = self.cls_feat_3(cls_feat_2)
-        reg_feat_3 = self.reg_feat_3(reg_feat_2)
-
-        return cls_feat_3, reg_feat_3
-
-
 class DecoupledHead(nn.Module):
     def __init__(self, 
                  head='naive_head',
@@ -138,8 +68,6 @@ class DecoupledHead(nn.Module):
         # feature stage
         if head == 'naive_head':
             self.head = NaiveHead(head_dim, kernel_size, padding)
-        elif head == 'cross_head':
-            self.head = CrossHead(head_dim, kernel_size, padding)
 
         # prediction stage
         self.obj_pred = nn.Conv2d(head_dim, 1 * num_anchors, kernel_size=3, padding=1)

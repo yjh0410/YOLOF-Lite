@@ -135,6 +135,7 @@ class Criterion(nn.Module):
         src_idx = torch.cat(
             [src + idx * anchor_boxes[0].shape[0] for idx, (src, _) in
              enumerate(indices)])
+        # [BM, C]
         gt_cls = torch.full(pred_cls.shape[:1],
                                 self.num_classes,
                                 dtype=torch.int64,

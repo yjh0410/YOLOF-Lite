@@ -35,7 +35,9 @@ class DilatedEncoder(nn.Module):
         )
         encoders = []
         for d in dilation_list:
-            encoders.append(Bottleneck(in_dim=out_dim, dilation=d, expand_ratio=expand_ratio))
+            encoders.append(Bottleneck(in_dim=out_dim, 
+                                       dilation=d, 
+                                       expand_ratio=expand_ratio))
         self.encoders = nn.Sequential(*encoders)
 
         self._init_weight()

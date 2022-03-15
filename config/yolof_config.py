@@ -16,7 +16,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [2, 4, 6, 8],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -35,7 +34,6 @@ yolof_config = {
         # optimizer
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
         'warmup_factor': 0.00066667
     },
@@ -54,7 +52,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [2, 4, 6, 8],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -71,8 +68,6 @@ yolof_config = {
         'igt': 0.7,
         'ctr_clamp': 32,
         # optimizer
-        'base_lr': 0.03,
-        'lr_backbone': 0.01,
         'optimizer': 'sgd',
         'momentum': 0.9,
         'weight_decay': 1e-4,
@@ -95,7 +90,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [4, 8, 12, 16],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -114,7 +108,6 @@ yolof_config = {
         # optimizer
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
         'warmup_factor': 0.00066667
     },
@@ -133,7 +126,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [2, 4, 6, 8],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -152,7 +144,6 @@ yolof_config = {
         # optimizer
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
         'warmup_factor': 0.00066667
     },
@@ -171,7 +162,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [4, 8, 12, 16],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -190,7 +180,6 @@ yolof_config = {
         # optimizer
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
         'warmup_factor': 0.00066667
     },
@@ -209,7 +198,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [2, 4, 6, 8],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -228,7 +216,6 @@ yolof_config = {
         # optimizer
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
         'warmup_factor': 0.00066667
     },
@@ -247,7 +234,6 @@ yolof_config = {
         'neck': 'dilated_encoder',
         'dilation_list': [4, 8, 12, 16],
         'expand_ratio': 0.25,
-        'nblocks': 4,
         # head
         'head_dim': 512,
         'head': 'naive_head',
@@ -266,7 +252,6 @@ yolof_config = {
         # optimizer
         'momentum': 0.9,
         'weight_decay': 1e-4,
-        'weight_decay_norm': 0.0,
         'warmup': 'linear',
         'warmup_factor': 0.00066667
     },

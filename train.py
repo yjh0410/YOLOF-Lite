@@ -41,6 +41,10 @@ def parse_args():
                         help='start epoch to train')
     parser.add_argument('--max_epoch', type=int, default=12,
                         help='max epoch to train')
+    parser.add_argument('-lr', '--base_lr', type=float, default=0.12,
+                        help='base learning rate')
+    parser.add_argument('-lr_bk', '--backbone_lr', type=float, default=0.04,
+                        help='backbone learning rate')
     parser.add_argument('--lr_epoch', nargs='+', default=[8, 10], type=int,
                         help='lr epoch to decay')
     parser.add_argument('--num_workers', default=4, type=int, 
@@ -193,8 +197,8 @@ def train():
 
     # optimizer
     optimizer = build_optimizer(model=model_without_ddp,
-                                base_lr=cfg['base_lr'],
-                                lr_backbone=cfg['lr_backbone'],
+                                base_lr=args.base_lr,
+                                backbone_lr=args.backbone_lr,
                                 name=cfg['optimizer'],
                                 momentum=cfg['momentum'],
                                 weight_decay=cfg['weight_decay'])
@@ -204,7 +208,7 @@ def train():
 
     # warmup scheduler
     warmup_scheduler = build_warmup(name=cfg['warmup'],
-                                    base_lr=cfg['base_lr'],
+                                    base_lr=args.base_lr,
                                     wp_iter=cfg['wp_iter'],
                                     warmup_factor=cfg['warmup_factor'])
 
@@ -232,7 +236,7 @@ def train():
                 # warmup is over
                 print('Warmup is over')
                 warmup = False
-                warmup_scheduler.set_lr(optimizer, cfg['base_lr'], cfg['base_lr'])
+                warmup_scheduler.set_lr(optimizer, args.base_lr, args.base_lr)
 
             # multi-scale trick
             if iter_i % 10 == 0 and iter_i > 0 and args.multi_scale:
