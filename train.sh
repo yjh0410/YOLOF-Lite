@@ -7,7 +7,7 @@ python train.py \
         -lr_bk 0.02 \
         --batch_size 32 \
         --img_size 800 \
-        --grad_clip_norm 4.0 \
+        --grad_clip_norm -1.0 \
         --num_workers 8 \
         --max_epoch 12 \
         --lr_epoch 8 11
