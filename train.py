@@ -191,7 +191,10 @@ def train():
                          device=device)
         model_without_ddp.trainable = True
         model_without_ddp.train()
-        
+    if args.distributed:
+        # wait for all processes to synchronize
+        dist.barrier()
+
     # EMA
     ema = ModelEMA(model_without_ddp) if args.ema else None
 
