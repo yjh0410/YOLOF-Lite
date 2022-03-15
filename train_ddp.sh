@@ -9,7 +9,6 @@ python -m torch.distributed.run --nproc_per_node=2 train.py \
                                                     --batch_size 32 \
                                                     --img_size 800 \
                                                     --optimizer sgd \
-                                                    --wp_iter 1500 \
                                                     --num_workers 8 \
                                                     --num_gpu 2 \
                                                     --max_epoch 12 \
