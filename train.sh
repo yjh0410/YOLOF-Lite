@@ -3,9 +3,9 @@ python train.py \
         -d coco \
         --root /mnt/share/ssd2/dataset/ \
         -v yolof50 \
-        -lr 0.03 \
-        -lr_bk 0.01 \
-        --batch_size 16 \
+        -lr 0.06 \
+        -lr_bk 0.02 \
+        --batch_size 32 \
         --img_size 800 \
         --grad_clip_norm 4.0 \
         --num_workers 8 \
