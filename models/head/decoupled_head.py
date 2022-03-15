@@ -8,19 +8,20 @@ class NaiveHead(nn.Module):
     def __init__(self, 
                  head_dim=256,
                  kernel_size=3,
-                 padding=1):
+                 padding=1,
+                 act_type='relu'):
         super().__init__()
         self.head_dim = head_dim
 
         self.cls_feats = nn.Sequential(
-            Conv(head_dim, head_dim, k=kernel_size, p=padding),
-            Conv(head_dim, head_dim, k=kernel_size, p=padding)
+            Conv(head_dim, head_dim, k=kernel_size, p=padding, act_type=act_type),
+            Conv(head_dim, head_dim, k=kernel_size, p=padding, act_type=act_type)
         )
         self.reg_feats = nn.Sequential(
-            Conv(head_dim, head_dim, k=kernel_size, p=padding),
-            Conv(head_dim, head_dim, k=kernel_size, p=padding),
-            Conv(head_dim, head_dim, k=kernel_size, p=padding),
-            Conv(head_dim, head_dim, k=kernel_size, p=padding)
+            Conv(head_dim, head_dim, k=kernel_size, p=padding, act_type=act_type),
+            Conv(head_dim, head_dim, k=kernel_size, p=padding, act_type=act_type),
+            Conv(head_dim, head_dim, k=kernel_size, p=padding, act_type=act_type),
+            Conv(head_dim, head_dim, k=kernel_size, p=padding, act_type=act_type)
         )
 
         self._init_weight()
@@ -57,7 +58,8 @@ class DecoupledHead(nn.Module):
                  padding=1,
                  num_classes=80, 
                  trainable=False,
-                 num_anchors=1):
+                 num_anchors=1,
+                 act_type='relu'):
         super().__init__()
         self.num_classes = num_classes
         self.head_dim = head_dim
@@ -67,7 +69,7 @@ class DecoupledHead(nn.Module):
 
         # feature stage
         if head == 'naive_head':
-            self.head = NaiveHead(head_dim, kernel_size, padding)
+            self.head = NaiveHead(head_dim, kernel_size, padding, act_type)
 
         # prediction stage
         self.obj_pred = nn.Conv2d(head_dim, 1 * num_anchors, kernel_size=3, padding=1)

@@ -39,7 +39,9 @@ class YOLOF(nn.Module):
                                                norm_type=cfg['norm_type'])
 
         # neck
-        self.neck = build_neck(cfg, in_dim=bk_dim, out_dim=cfg['head_dim'])
+        self.neck = build_neck(cfg=cfg, 
+                               in_dim=bk_dim, 
+                               out_dim=cfg['head_dim'])
                                      
         # head
         self.head = DecoupledHead(head=cfg['head'],
@@ -48,7 +50,8 @@ class YOLOF(nn.Module):
                                   padding=1,
                                   num_classes=num_classes,
                                   trainable=trainable,
-                                  num_anchors=self.num_anchors)
+                                  num_anchors=self.num_anchors,
+                                  act_type=cfg['act_type'])
 
         # create grid
         self.anchor_boxes = self.generate_anchors(img_size)

@@ -10,6 +10,7 @@ def build_neck(cfg, in_dim, out_dim):
         neck = DilatedEncoder(in_dim, 
                               out_dim, 
                               expand_ratio=cfg['expand_ratio'], 
-                              dilation_list=cfg['dilation_list'])
+                              dilation_list=cfg['dilation_list'],
+                              act_type=cfg['act_type'])
 
     return neck
