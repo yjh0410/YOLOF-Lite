@@ -108,8 +108,8 @@ class DecoupledHead(nn.Module):
         obj_pred = obj_pred.view(B, -1, 1, H, W)
         cls_pred = cls_pred.view(B, -1, self.num_classes, H, W)
         normalized_cls_pred = cls_pred + obj_pred - torch.log(
-            1. + torch.clamp(cls_pred.exp(), max=1e4) + torch.clamp(
-                obj_pred.exp(), max=1e4))
+            1. + torch.clamp(cls_pred.exp(), max=1e8) + torch.clamp(
+                obj_pred.exp(), max=1e8))
         # [B, KA, C, H, W] -> [B, H, W, KA, C] -> [B, M, C], M = HxWxKA
         normalized_cls_pred = normalized_cls_pred.permute(0, 3, 4, 1, 2).contiguous()
         normalized_cls_pred = normalized_cls_pred.view(B, -1, self.num_classes)
