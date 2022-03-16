@@ -30,9 +30,9 @@ PyTorch >= 1.9.1 and Torchvision >= 0.10.3
 
 ## Main results on COCO-val
 
-| Model                                     |  Size       |   mAP   |  FPS  |  FLOPs  |  Params  |
+| Model                                     |  Size       |   mAP   |  FPS  |  GFLOPs |  #params |
 |-------------------------------------------|-------------|---------|-------|---------|----------|
-| YOLOF_R_50_C5_1x                          |  928 × 928  |  35.6   |       |         |          |
+| YOLOF_R_50_C5_1x                          |  928 × 928  |  35.6   |       |  87     |  44M     |
 | YOLOF_R_50_DC5_1x                         |  928 × 928  |         |       |         |          |
 | YOLOF_R_101_C5_1x                         |  928 × 928  |         |       |         |          |
 | YOLOF_R_101_DC5_1x                        |  928 × 928  |         |       |         |          |
