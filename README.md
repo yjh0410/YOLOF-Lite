@@ -28,18 +28,28 @@ pip install -r requirements.txt
 ```
 PyTorch >= 1.9.1 and Torchvision >= 0.10.3
 
-## Main results on COCO-val
+# Main results on COCO-val
 
 | Model                                     |  Size       |   mAP   |  FPS  |  GFLOPs |  #params |
 |-------------------------------------------|-------------|---------|-------|---------|----------|
-| YOLOF_R_50_C5_1x                          |  800 × 800  |  35.6   |       |  62     |  44M     |
-| YOLOF_R_50_DC5_1x                         |  800 × 800  |         |       |  132    |  44M     |
-| YOLOF_R_101_C5_1x                         |  800 × 800  |         |       |         |          |
-| YOLOF_R_101_DC5_1x                        |  800 × 800  |         |       |         |          |
+| YOLOF_R_18_C5_1x                          |  928 × 928  |         |       |  47     |  30M     |
+| YOLOF_R_50_C5_1x                          |  928 × 928  |         |       |  86     |  44M     |
+| YOLOF_R_50_DC5_1x                         |  928 × 928  |         |       |  171    |  44M     |
+| YOLOF_R_101_C5_1x                         |  928 × 928  |         |       |  150    |  63M     |
+| YOLOF_R_101_DC5_1x                        |  928 × 928  |         |       |         |          |
 | YOLOF_CSP_D_53_DC5_3x                     |  608 × 608  |         |       |         |          |
 | YOLOF_CSP_D_53_DC5_9x                     |  608 × 608  |         |       |         |          |
 
 More results are coming ...
+
+# Weight
+- YOLOF_R_50_C5_1x: Coming soon ...
+- YOLOF_R_50_DC5_1x: Coming soon ...
+- YOLOF_R_101_C5_1x: Coming soon ...
+- YOLOF_R_101_DC5_1x: Coming soon ...
+- YOLOF_CSP_D_53_DC5_3x: Coming soon ...
+- YOLOF_CSP_D_53_DC5_9x: Coming soon ...
+
 
 # Train
 ```Shell
