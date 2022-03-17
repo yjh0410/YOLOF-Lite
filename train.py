@@ -87,11 +87,11 @@ def parse_args():
     parser.add_argument('-d', '--dataset', default='coco',
                         help='coco, voc, widerface, crowdhuman')
     
-    # Matcher
-    parser.add_argument('-ls', '--label_assignment', default='static', type=str,
-                        help='label assignment method')
-
     # Loss
+    parser.add_argument('--alpha', default=0.25, type=float,
+                        help='weight of cls loss')
+    parser.add_argument('--gamma', default=2.0, type=float,
+                        help='weight of reg loss')
     parser.add_argument('--loss_cls_weight', default=1.0, type=float,
                         help='weight of cls loss')
     parser.add_argument('--loss_reg_weight', default=1.0, type=float,
@@ -259,9 +259,7 @@ def train():
                                                        pred_cls = cls_pred,
                                                        pred_box = box_pred,
                                                        targets = targets,
-                                                       anchor_boxes = model_without_ddp.anchor_boxes,
-                                                       images = images,
-                                                       vis_labels=args.vis_targets)
+                                                       anchor_boxes = model_without_ddp.anchor_boxes)
 
             # visualize targets
             if args.vis_targets:

@@ -42,7 +42,9 @@ class SigmoidFocalWithLogitsLoss(nn.Module):
 class Criterion(nn.Module):
     def __init__(self, 
                  cfg, 
-                 device, 
+                 device,
+                 alpha=0.25,
+                 gamma=2.0, 
                  loss_cls_weight=1.0, 
                  loss_reg_weight=1.0, 
                  num_classes=80):
@@ -54,7 +56,7 @@ class Criterion(nn.Module):
         self.loss_cls_weight = loss_cls_weight
         self.loss_reg_weight = loss_reg_weight
 
-        self.cls_loss_f = SigmoidFocalWithLogitsLoss(reduction='none')
+        self.cls_loss_f = SigmoidFocalWithLogitsLoss(reduction='none', gamma=gamma, alpha=alpha)
 
 
     def loss_labels(self, pred_cls, tgt_cls, num_boxes):
@@ -86,9 +88,7 @@ class Criterion(nn.Module):
                 pred_cls, 
                 pred_box, 
                 targets, 
-                anchor_boxes=None,
-                images=None, 
-                vis_labels=False):
+                anchor_boxes=None):
         """
             pred_cls: (Tensor) [B, M, C]
             pred_box: (Tensor) [B, M, 4]
@@ -97,8 +97,6 @@ class Criterion(nn.Module):
                                  'orig_size': ...}, ...]
             stride: output stride
             anchor_boxes: (Tensor) [M, 4]
-            images: (tensor) [B, 3, H, W]
-            vis_labels: (bool) visualize labels to check positive samples
         """
         # rescale tgt boxes
         B = len(targets)
@@ -176,6 +174,8 @@ class Criterion(nn.Module):
 def build_criterion(args, cfg, device, num_classes=80):
     criterion = Criterion(cfg=cfg,
                           device=device,
+                          alpha=args.alpha,
+                          gamma=args.gamma,
                           loss_cls_weight=args.loss_cls_weight,
                           loss_reg_weight=args.loss_reg_weight,
                           num_classes=num_classes)

@@ -106,7 +106,7 @@ if __name__ == '__main__':
         exit(0)
 
 
-    # YOLOQ config
+    # YOLOF config
     print('Model: ', args.version)
     cfg = yolof_config[args.version]
 
