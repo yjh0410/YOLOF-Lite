@@ -60,13 +60,6 @@ def parse_args():
     parser.add_argument('--img_size', type=int, default=640,
                         help='The size of input image')
 
-
-    # visualize
-    parser.add_argument('--vis_data', action='store_true', default=False,
-                        help='visualize input data.')
-    parser.add_argument('--vis_targets', action='store_true', default=False,
-                        help='visualize the targets.')
-
     # model
     parser.add_argument('-v', '--version', default='yolof50', choices=['yolof18', 'yolof50', 'yolof50-DC5', \
                                                                        'yolof101', 'yolof101-DC5', 'yolof53-DC5', \
@@ -261,10 +254,6 @@ def train():
                                                        targets = targets,
                                                        anchor_boxes = model_without_ddp.anchor_boxes)
 
-            # visualize targets
-            if args.vis_targets:
-                continue
-            
             loss_dict = dict(
                 cls_loss=cls_loss,
                 reg_loss=reg_loss,
