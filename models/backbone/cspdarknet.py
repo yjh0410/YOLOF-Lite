@@ -1,7 +1,6 @@
 """
     This is a CSPDarkNet-53 with Mish.
 """
-import os
 import torch
 import torch.nn as nn
 
