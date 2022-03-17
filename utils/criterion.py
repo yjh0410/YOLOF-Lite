@@ -98,26 +98,28 @@ class Criterion(nn.Module):
             stride: output stride
             anchor_boxes: (Tensor) [M, 4]
         """
+        pred_box_copy = pred_box.detach().clone().cpu()
+        anchor_boxes_copy = anchor_boxes.clone().cpu()
         # rescale tgt boxes
         B = len(targets)
-        indices = self.matcher(img_size, pred_box, anchor_boxes, targets)
+        indices = self.matcher(img_size, pred_box_copy, anchor_boxes_copy, targets)
         pred_cls = pred_cls.reshape(-1, self.num_classes)
-        anchor_boxes = box_cxcywh_to_xyxy(anchor_boxes)
+        anchor_boxes_copy = box_cxcywh_to_xyxy(anchor_boxes_copy)
         # [M, 4] -> [1, M, 4] -> [B, M, 4]
-        anchor_boxes = anchor_boxes[None].repeat(B, 1, 1)
+        anchor_boxes_copy = anchor_boxes_copy[None].repeat(B, 1, 1)
 
         ious = []
         pos_ious = []
         for i in range(B):
             src_idx, tgt_idx = indices[i]
             # iou between predbox and tgt box
-            iou, _ = box_iou(pred_box[i, ...], (targets[i]['boxes'] * img_size).clone().to(pred_box.device))
+            iou, _ = box_iou(pred_box_copy[i, ...], (targets[i]['boxes'] * img_size).clone())
             if iou.numel() == 0:
                 max_iou = iou.new_full((iou.size(0),), 0)
             else:
                 max_iou = iou.max(dim=1)[0]
             # iou between anchorbox and tgt box
-            a_iou, _ = box_iou(anchor_boxes[i], (targets[i]['boxes'] * img_size).clone().to(pred_box.device))
+            a_iou, _ = box_iou(anchor_boxes_copy[i], (targets[i]['boxes'] * img_size).clone())
             if a_iou.numel() == 0:
                 pos_iou = a_iou.new_full((0,), 0)
             else:
@@ -131,7 +133,7 @@ class Criterion(nn.Module):
         pos_ignore_idx = pos_ious < self.cfg['iou_t']
 
         src_idx = torch.cat(
-            [src + idx * anchor_boxes[0].shape[0] for idx, (src, _) in
+            [src + idx * anchor_boxes_copy[0].shape[0] for idx, (src, _) in
              enumerate(indices)])
         # [BM, C]
         gt_cls = torch.full(pred_cls.shape[:1],
