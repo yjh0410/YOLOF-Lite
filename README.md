@@ -51,14 +51,55 @@ You can change the configurations of `train.sh`.
 
 According to your own situation, you can make necessary adjustments to the above run commands
 
-## Test
+# Test
+Take YOLOF-R50 as an example:
+
 ```Shell
 python test.py -d coco \
-               --cuda \
-               --weight path/to/weight \
-               --img_size 640 \
                --root path/to/dataset/ \
+               --cuda \
+               -v yolof50 \
+               --weight path/to/weight \
+               --img_size 928 \
                --show
 ```
 
 You can run the above command to visualize the detection results on the dataset.
+
+
+# Demo
+I have provide some images in `data/demo/images/`, so you can run following command to run a demo:
+
+```Shell
+python demo.py --mode image \
+               --path_to_img data/demo/images/ \
+               -v yolof50 \
+               --cuda \
+               --weight path/to/weight \
+               --img_size 928 \
+               --show
+```
+
+If you want run a demo of streaming video detection, you need to set `--mode` to `video`, and give the path to video `--path_to_vid`。
+
+```Shell
+python demo.py --mode video \
+               --path_to_img data/demo/videos/ \
+               -v yolof50 \
+               --cuda \
+               --weight path/to/weight \
+               --img_size 928 \
+               --show
+```
+
+If you want run video detection with your camera, you need to set `--mode` to `camera`。
+
+```Shell
+python demo.py --mode camera \
+               -v yolof50 \
+               --cuda \
+               --weight path/to/weight \
+               --img_size 928 \
+               --show
+```
+
