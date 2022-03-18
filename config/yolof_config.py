@@ -370,7 +370,7 @@ yolof_config = {
     'yolof53-DC5': {
         # input
         'format': 'BGR',
-        'pixel_mean': [0.406, 0.456, 0.485],
+        'pixel_mean': [103.53, 116.28, 123.675],
         'pixel_std': [1.0, 1.0, 1.0],
         'transforms': {
             '1x':[{'name': 'RandomHorizontalFlip'},

@@ -303,6 +303,14 @@ class VOCDetection(data.Dataset):
 if __name__ == "__main__":
     from transforms import TrainTransforms, ValTransforms, BaseTransforms
 
+    # format = 'BGR'
+    # pixel_mean = [103.53, 116.28, 123.675]
+    # pixel_std = [1.0, 1.0, 1.0]
+
+    format = 'RGB'
+    pixel_mean = [0.485, 0.456, 0.406]
+    pixel_std = [0.229, 0.224, 0.225]
+
     trans_config = [
             {'name': 'DistortTransform',
              'hue': 0.1,
@@ -319,10 +327,17 @@ if __name__ == "__main__":
             {'name': 'PadImage'}
         ]
     img_size = 640
-    transform = TrainTransforms(img_size=img_size, trans_config=trans_config)
-    color_augment = BaseTransforms(img_size=img_size)
-    pixel_mean = np.array(transform.pixel_mean, dtype=np.float32)
-    pixel_std = np.array(transform.pixel_std, dtype=np.float32)
+    transform = TrainTransforms(img_size=img_size, 
+                                trans_config=trans_config,
+                                pixel_mean=pixel_mean,
+                                pixel_std=pixel_std,
+                                format=format)
+    color_augment = BaseTransforms(img_size=img_size,
+                                    pixel_mean=pixel_mean,
+                                    pixel_std=pixel_std,
+                                    format=format)
+    pixel_mean = np.array(pixel_mean, dtype=np.float32)
+    pixel_std = np.array(pixel_std, dtype=np.float32)
 
     dataset = VOCDetection(img_size=img_size,
                            data_dir='E:\\python_work\\object_detection\\dataset\\VOCdevkit',
@@ -340,10 +355,15 @@ if __name__ == "__main__":
         image, target = dataset.pull_item(i)
         # to numpy
         image = image.permute(1, 2, 0).numpy()
-        # denormalize
-        image = ((image * pixel_std + pixel_mean)*255).astype(np.uint8)
         # to BGR format
-        image = image[:, :, (2, 1, 0)]
+        if format == 'RGB':
+            # denormalize
+            image = image * pixel_std + pixel_mean
+            image = image * 255
+            image = image[:, :, (2, 1, 0)].astype(np.uint8)
+        elif format == 'BGR':
+            image = image * pixel_std + pixel_mean
+            image = image.astype(np.uint8)
         image = image.copy()
         img_h, img_w = image.shape[:2]
 

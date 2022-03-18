@@ -35,12 +35,14 @@ class ToTensor(object):
         # to rgb
         if self.format == 'RGB':
             image = image[..., (2, 1, 0)]
+            image = torch.from_numpy(image).permute(2, 0, 1).contiguous().float()
+            image = image / 255.
         elif self.format == 'BGR':
             image = image
+            image = torch.from_numpy(image).permute(2, 0, 1).contiguous().float()
         else:
             print('Unknown color format !!')
             exit()
-        image = F.to_tensor(image)
         if target is not None:
             target["boxes"] = torch.as_tensor(target["boxes"]).float()
             target["labels"] = torch.as_tensor(target["labels"]).long()
