@@ -84,7 +84,7 @@ If you want run a demo of streaming video detection, you need to set `--mode` to
 
 ```Shell
 python demo.py --mode video \
-               --path_to_img data/demo/videos/ \
+               --path_to_img data/demo/videos/your_video \
                -v yolof50 \
                --cuda \
                --weight path/to/weight \

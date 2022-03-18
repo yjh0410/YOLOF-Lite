@@ -235,10 +235,16 @@ def run():
     model = model.to(device).eval()
     print('Finished loading model!')
 
+    # transform
+    transform = ValTransforms(img_size=args.img_size,
+                              pixel_mean=cfg['pixel_mean'],
+                              pixel_std=cfg['pixel_std'],
+                              format=cfg['format'])
+
     # run
     detect(net=model, 
             device=device,
-            transform=ValTransforms(args.img_size),
+            transform=transform,
             mode=args.mode,
             path_to_img=args.path_to_img,
             path_to_vid=args.path_to_vid,
