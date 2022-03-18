@@ -44,7 +44,9 @@ args = parser.parse_args()
 
 def test(net, device, img_size, testset, transform):
     # Step-1: Compute FLOPs and Params
-    FLOPs_and_Params(net, img_size)
+    FLOPs_and_Params(model=net, 
+                     img_size=img_size, 
+                     device=device)
 
     # Step-2: Compute FPS
     num_images = 2002
