@@ -15,9 +15,9 @@ from models.yolof import build_model
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='YOLOQ Detection')
+    parser = argparse.ArgumentParser(description='YOLOF-Lite Detection')
     # basic
-    parser.add_argument('--img_size', default=800, type=int,
+    parser.add_argument('-size', '--img_size', default=928, type=int,
                         help='the min size of input image')
     parser.add_argument('--cuda', action='store_true', default=False,
                         help='Use cuda')

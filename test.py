@@ -16,10 +16,10 @@ from models.yolof import build_model
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='YOLOQ Detection')
+    parser = argparse.ArgumentParser(description='YOLOF-Lite Detection')
 
     # basic
-    parser.add_argument('--img_size', default=800, type=int,
+    parser.add_argument('-size', '--img_size', default=928, type=int,
                         help='the min size of input image')
     parser.add_argument('--show', action='store_true', default=False,
                         help='show the visulization results.')
@@ -41,8 +41,6 @@ def parse_args():
                         help='NMS threshold')
     parser.add_argument('--topk', default=100, type=int,
                         help='NMS threshold')
-    parser.add_argument('-bg', '--background', action='store_true', default=False,
-                        help='add background class')
                         
     # dataset
     parser.add_argument('--root', default='/mnt/share/ssd2/dataset',
@@ -199,7 +197,7 @@ if __name__ == '__main__':
                      np.random.randint(255),
                      np.random.randint(255)) for _ in range(num_classes)]
 
-    # YOLOQ config
+    # YOLOF config
     print('Model: ', args.version)
     cfg = yolof_config[args.version]
 
