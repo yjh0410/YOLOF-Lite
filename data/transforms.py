@@ -32,13 +32,17 @@ class ToTensor(object):
         self.format = format
 
     def __call__(self, image, target=None):
-        # to rgb
+        # check color format
         if self.format == 'RGB':
+            # BGR -> RGB
             image = image[..., (2, 1, 0)]
+            # [H, W, C] -> [C, H, W]
             image = torch.from_numpy(image).permute(2, 0, 1).contiguous().float()
             image = image / 255.
         elif self.format == 'BGR':
+            # keep BGR format
             image = image
+            # [H, W, C] -> [C, H, W]
             image = torch.from_numpy(image).permute(2, 0, 1).contiguous().float()
         else:
             print('Unknown color format !!')
