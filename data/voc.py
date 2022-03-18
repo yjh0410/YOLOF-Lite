@@ -304,9 +304,15 @@ if __name__ == "__main__":
     from transforms import TrainTransforms, ValTransforms, BaseTransforms
 
     trans_config = [
+            {'name': 'DistortTransform',
+             'hue': 0.1,
+             'saturation': 1.5,
+             'exposure': 1.5},
             {'name': 'RandomHorizontalFlip'},
             {'name': 'RandomShift',
              'max_shift': 32},
+            {'name': 'JitterCrop',
+             'jitter_ratio': 0.3},
             {'name': 'Resize'},
             {'name': 'ToTensor'},
             {'name': 'Normalize'},
