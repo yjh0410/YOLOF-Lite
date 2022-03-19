@@ -42,7 +42,6 @@ PyTorch >= 1.9.1 and Torchvision >= 0.10.3
 | YOLOF_R_101_C5_1x                         |  928 × 928  |         |       |  150    |  63M     |  |
 | YOLOF_R_50_DC5_640_3x                     |  640 × 640  |         |       |  84     |  44M     |  |
 | YOLOF_R_50_DC5_640_3x_Mosaic              |  640 × 640  |         |       |  84     |  44M     |  |
-More results are coming ...
 
 
 # Train
