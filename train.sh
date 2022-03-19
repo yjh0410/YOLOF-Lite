@@ -8,6 +8,6 @@ python train.py \
         --batch_size 16 \
         --img_size 640 \
         --grad_clip_norm 4.0 \
-        --num_workers 8 \
+        --num_workers 4 \
         --schedule 3x \
         --mosaic
