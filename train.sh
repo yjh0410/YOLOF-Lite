@@ -9,5 +9,5 @@ python train.py \
         --img_size 640 \
         --grad_clip_norm 4.0 \
         --num_workers 8 \
-        --schedule 3x \
+        --schedule 1x \
         # --mosaic
