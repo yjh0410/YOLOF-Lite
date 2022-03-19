@@ -34,10 +34,10 @@ PyTorch >= 1.9.1 and Torchvision >= 0.10.3
 |-------------------------------------------|-------------|---------|-------|---------|----------|--------|
 | YOLOF_R_18_C5_1x                          |  928 × 928  |  31.7   |   80  |  47     |  31M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r18_C5_1x_31.7.pth) |
 | YOLOF_R_50_C5_1x                          |  928 × 928  |  37.4   |   34  |  86     |  44M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r50_C5_1x_37.4.pth) |
-| YOLOF_R_50_DC5_1x                         |  928 × 928  |         |       |  171    |  44M     | [github](coming soon) |
+| YOLOF_R_50_DC5_1x                         |  928 × 928  |  38.7   |       |  171    |  44M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r50_DC5_1x_38.7.pth) |
 | YOLOF_R_101_C5_1x                         |  928 × 928  |         |       |  150    |  63M     | [github](coming soon) |
-| YOLOF_CSP_D_53_DC5_3x                     |  608 × 608  |         |       |  93     |  47M     | [github](coming soon) |
-| YOLOF_CSP_D_53_DC5_9x                     |  608 × 608  |         |       |  93     |  47M     | [github](coming soon) |
+| YOLOF_R_50_DC5_640_3x                     |  640 × 640  |         |       |  93     |  47M     | [github](coming soon) |
+| YOLOF_R_101_DC5_640_3x                    |  640 × 640  |         |       |  93     |  47M     | [github](coming soon) |
 
 More results are coming ...
 
