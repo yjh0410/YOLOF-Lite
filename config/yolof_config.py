@@ -417,7 +417,7 @@ yolof_config = {
         'act_type': 'lrelu',
         # neck
         'neck': 'dilated_encoder',
-        'dilation_list': [4, 8, 12, 16],
+        'dilation_list': [1, 2, 3, 4, 5, 6, 7, 8],
         'expand_ratio': 0.25,
         # head
         'head_dim': 512,
