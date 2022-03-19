@@ -367,11 +367,11 @@ yolof_config = {
         },
     },
 
-    'yolof53-DC5': {
+    'yolof50-DC5-640': {
         # input
-        'format': 'BGR',
-        'pixel_mean': [103.53, 116.28, 123.675],
-        'pixel_std': [1.0, 1.0, 1.0],
+        'format': 'RGB',
+        'pixel_mean': [0.485, 0.456, 0.406],
+        'pixel_std': [0.229, 0.224, 0.225],
         'transforms': {
             '1x':[{'name': 'RandomHorizontalFlip'},
                   {'name': 'RandomShift', 'max_shift': 32},
@@ -397,24 +397,12 @@ yolof_config = {
                   {'name': 'Resize'},
                   {'name': 'ToTensor'},
                   {'name': 'Normalize'},
-                  {'name': 'PadImage'}],
-
-            '9x':[{'name': 'DistortTransform',
-                   'hue': 0.1,
-                   'saturation': 1.5,
-                   'exposure': 1.5},
-                  {'name': 'RandomHorizontalFlip'},
-                  {'name': 'RandomShift', 'max_shift': 32},
-                  {'name': 'JitterCrop', 'jitter_ratio': 0.3},
-                  {'name': 'Resize'},
-                  {'name': 'ToTensor'},
-                  {'name': 'Normalize'},
                   {'name': 'PadImage'}]},
         # model
-        'backbone': 'cspdarknet53-d',
+        'backbone': 'resnet50-d',
         'norm_type': 'FrozeBN',
         'stride': 16,
-        'act_type': 'lrelu',
+        'act_type': 'relu',
         # neck
         'neck': 'dilated_encoder',
         'dilation_list': [1, 2, 3, 4, 5, 6, 7, 8],
@@ -445,13 +433,10 @@ yolof_config = {
                     'multi_scale': None},
             '2x': {'max_epoch': 24, 
                     'lr_epoch': [16, 22], 
-                    'multi_scale': [448, 512, 544, 576, 608, 640]},
+                    'multi_scale': [480, 544, 608, 672, 736, 800]},
             '3x': {'max_epoch': 36, 
                     'lr_epoch': [24, 33], 
-                    'multi_scale': [448, 512, 544, 576, 608, 640]},
-            '9x': {'max_epoch': 108, 
-                    'lr_epoch': [72, 99], 
-                    'multi_scale': [448, 512, 544, 576, 608, 640]},
-                },
+                    'multi_scale': [480, 544, 608, 672, 736, 800]},
+        },
         }
 }
