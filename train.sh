@@ -10,4 +10,4 @@ python train.py \
         --grad_clip_norm 4.0 \
         --num_workers 8 \
         --schedule 3x \
-        # --mosaic
+        --mosaic
