@@ -11,6 +11,10 @@ I think it might be easy to deploy the resize method used in YOLOF in my YOLOF-L
 
 For other details, I try to align my configuration with official YOLOF.
 
+If you really want to try a complete YOLOF, my another YOLOF built by PyTorch might be a good choice:
+
+https://github.com/yjh0410/PyTorch_YOLOF
+
 # Requirements
 - We recommend you to use Anaconda to create a conda environment:
 ```Shell
