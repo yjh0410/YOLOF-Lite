@@ -41,7 +41,7 @@ class ToTensor(object):
             image = image / 255.
         elif self.format == 'BGR':
             # keep BGR format
-            image = image
+            image = image / 255.
             # [H, W, C] -> [C, H, W]
             image = torch.from_numpy(image).permute(2, 0, 1).contiguous().float()
         else:
