@@ -40,8 +40,9 @@ PyTorch >= 1.9.1 and Torchvision >= 0.10.3
 | YOLOF_R_50_C5_1x                          |  928 × 928  |  37.4   |   34  |  86     |  44M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r50_C5_1x_37.4.pth) |
 | YOLOF_R_50_DC5_1x                         |  928 × 928  |  38.7   |   24  |  171    |  44M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r50_DC5_1x_38.7.pth) |
 | YOLOF_R_101_C5_1x                         |  928 × 928  |  39.5   |   22  |  151    |  63M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r101_C5_1x_39.5.pth) |
-| YOLOF_R_50_DC5_640_3x                     |  640 × 640  |         |       |  84     |  44M     |  |
+| YOLOF_R_50_DC5_640_3x                     |  640 × 640  |  37.4   |   50  |  84     |  44M     | [github](https://github.com/yjh0410/YOLOF-Lite/releases/download/YOLOF-Lite-Weight/yolof_r50_DC5_640_3x_37.4.pth) |
 
+All results are measured on a TITAN RTX GPU.
 
 # Train
 ```Shell
