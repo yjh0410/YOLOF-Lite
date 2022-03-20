@@ -14,33 +14,34 @@ from utils import fuse_conv_bn
 from models.yolof import build_model
 
 
-parser = argparse.ArgumentParser(description='Benchmark')
-# Model
-parser.add_argument('-v', '--version', default='yolof50', choices=['yolof18', 'yolof50', 'yolof50-DC5', \
-                                                                    'yolof101', 'yolof101-DC5', 'yolof53', 'yolof53-DC5'],
-                    help='build yolof')
-parser.add_argument('--fuse_conv_bn', action='store_true', default=False,
-                    help='fuse conv and bn')
-parser.add_argument('--conf_thresh', default=0.1, type=float,
-                    help='confidence threshold')
-parser.add_argument('--nms_thresh', default=0.45, type=float,
-                    help='NMS threshold')
-parser.add_argument('--topk', default=100, type=int,
-                    help='NMS threshold')
-# data root
-parser.add_argument('--root', default='/mnt/share/ssd2/dataset',
-                    help='data root')
-# basic
-parser.add_argument('-size', '--img_size', default=928, type=int or list,
-                    help='img_size')
-parser.add_argument('--weight', default=None,
-                    type=str, help='Trained state_dict file path to open')
-# cuda
-parser.add_argument('--cuda', action='store_true', default=False, 
-                    help='use cuda.')
+def parse_args():
+    parser = argparse.ArgumentParser(description='Benchmark')
+    # Model
+    parser.add_argument('-v', '--version', default='yolof50', choices=['yolof18', 'yolof50', 'yolof50-DC5', \
+                                                                       'yolof101', 'yolof101-DC5', 'yolof50-DC5-640'],
+                        help='build yolof')
+    parser.add_argument('--fuse_conv_bn', action='store_true', default=False,
+                        help='fuse conv and bn')
+    parser.add_argument('--conf_thresh', default=0.1, type=float,
+                        help='confidence threshold')
+    parser.add_argument('--nms_thresh', default=0.45, type=float,
+                        help='NMS threshold')
+    parser.add_argument('--topk', default=100, type=int,
+                        help='NMS threshold')
+    # data root
+    parser.add_argument('--root', default='/mnt/share/ssd2/dataset',
+                        help='data root')
+    # basic
+    parser.add_argument('-size', '--img_size', default=928, type=int or list,
+                        help='img_size')
+    parser.add_argument('--weight', default=None,
+                        type=str, help='Trained state_dict file path to open')
+    # cuda
+    parser.add_argument('--cuda', action='store_true', default=False, 
+                        help='use cuda.')
 
-args = parser.parse_args()
-
+    return parser.parse_args()
+                    
 
 def test(net, device, img_size, testset, transform):
     # Step-1: Compute FLOPs and Params
@@ -89,6 +90,7 @@ def test(net, device, img_size, testset, transform):
 
 
 if __name__ == '__main__':
+    args = parse_args()
     # get device
     if args.cuda:
         print('use cuda')
