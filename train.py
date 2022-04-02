@@ -4,6 +4,7 @@ import os
 import argparse
 import time
 import random
+from copy import deepcopy
 
 import torch
 import torch.nn.functional as F
@@ -171,13 +172,14 @@ def train():
 
     # compute FLOPs and Params
     if distributed_utils.is_main_process:
-        model_without_ddp.trainable = False
-        model_without_ddp.eval()
-        FLOPs_and_Params(model=model_without_ddp, 
+        model_copy = deepcopy(model_without_ddp)
+        model_copy.trainable = False
+        model_copy.eval()
+        FLOPs_and_Params(model=model_copy, 
                          img_size=args.img_size, 
                          device=device)
-        model_without_ddp.trainable = True
-        model_without_ddp.train()
+        model_copy.trainable = True
+        model_copy.train()
     if args.distributed:
         # wait for all processes to synchronize
         dist.barrier()
@@ -244,7 +246,7 @@ def train():
             images = images.to(device)
 
             # inference
-            cls_pred, box_pred = model_without_ddp(images)
+            cls_pred, box_pred = model(images)
 
             # compute loss
             cls_loss, reg_loss, total_loss = criterion(img_size = train_size,
@@ -306,9 +308,15 @@ def train():
             if distributed_utils.is_main_process():
                 if evaluator is None:
                     print('No evaluator ... save model and go on training.')
-                    print('Saving state, epoch: {}'.format(epoch + 1))
+                    print('Saving state, epoch:', epoch + 1)
                     weight_name = '{}_epoch_{}.pth'.format(args.version, epoch + 1)
-                    torch.save(model_without_ddp.state_dict(), os.path.join(path_to_save, weight_name)) 
+                    checkpoint_path = os.path.join(path_to_save, weight_name)
+                    torch.save({'model': model_without_ddp.state_dict(),
+                                'optimizer': optimizer.state_dict(),
+                                'lr_scheduler': lr_scheduler.state_dict(),
+                                'epoch': epoch,
+                                'args': args}, 
+                                checkpoint_path)                      
                 else:
                     print('eval ...')
                     model_eval = ema.ema if args.ema else model_without_ddp
@@ -328,7 +336,13 @@ def train():
                         # save model
                         print('Saving state, epoch:', epoch + 1)
                         weight_name = '{}_epoch_{}_{:.2f}.pth'.format(args.version, epoch + 1, best_map*100)
-                        torch.save(model_eval.state_dict(), os.path.join(path_to_save, weight_name)) 
+                        checkpoint_path = os.path.join(path_to_save, weight_name)
+                        torch.save({'model': model_without_ddp.state_dict(),
+                                    'optimizer': optimizer.state_dict(),
+                                    'lr_scheduler': lr_scheduler.state_dict(),
+                                    'epoch': epoch,
+                                    'args': args}, 
+                                    checkpoint_path)                      
 
                     # set train mode.
                     model_eval.trainable = True
